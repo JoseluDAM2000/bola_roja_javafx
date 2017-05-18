@@ -11,6 +11,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.util.Duration;
 import javafx.animation.Animation;
+import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
 /**
  * Write a description of class Bola here.
  *
@@ -19,7 +23,7 @@ import javafx.animation.Animation;
  */
 public class Circulo extends Application
 {
-    
+    boolean enEjecucion = true;
 
     public static void main(String[] args){
         launch(args);
@@ -42,6 +46,19 @@ public class Circulo extends Application
         Timeline timeline = new Timeline(kf);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-        
+        Button btn = new Button("Parar");
+        btn.setOnAction(event -> {
+            if(enEjecucion){
+                timeline.stop();
+            }else{
+                timeline.play();
+            }
+            modificarEjecucion();
+        });
+        panel.getChildren().add(btn);
+    }
+    
+    private void modificarEjecucion(){
+        enEjecucion = !enEjecucion;
     }
 }
