@@ -10,7 +10,7 @@ import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.util.Duration;
-
+import javafx.animation.Animation;
 /**
  * Write a description of class Bola here.
  *
@@ -35,10 +35,12 @@ public class Circulo extends Application
         primaryStage.setScene(escena);
         primaryStage.show();
         
-        Timeline timeline = new Timeline();
-        final KeyValue kv = new KeyValue(circle.centerXProperty(), 600);
-        final KeyFrame kf = new KeyFrame(Duration.millis(5000), kv);
-        timeline.getKeyFrames().add(kf);
+        KeyFrame kf = new KeyFrame(Duration.millis(10), (event) -> {
+            circle.setTranslateX(circle.getTranslateX()+1);
+            circle.setTranslateY(circle.getTranslateY()+1);
+        });
+        Timeline timeline = new Timeline(kf);
+        timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
         
     }
