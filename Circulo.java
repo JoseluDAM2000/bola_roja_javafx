@@ -4,6 +4,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.Scene;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.MoveTo;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.util.Duration;
 
 /**
  * Write a description of class Bola here.
@@ -28,5 +34,12 @@ public class Circulo extends Application
         panel.getChildren().add(circle);
         primaryStage.setScene(escena);
         primaryStage.show();
+        
+        Timeline timeline = new Timeline();
+        final KeyValue kv = new KeyValue(circle.centerXProperty(), 600);
+        final KeyFrame kf = new KeyFrame(Duration.millis(5000), kv);
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+        
     }
 }
