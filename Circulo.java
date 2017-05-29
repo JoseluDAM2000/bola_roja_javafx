@@ -18,7 +18,7 @@ import javafx.event.EventHandler;
 import java.util.Random;
 import javafx.geometry.Bounds;
 import javafx.scene.shape.Rectangle;
-
+import java.util.ArrayList;
 import javafx.scene.input.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -96,6 +96,25 @@ public class Circulo extends Application
 
         panel.getChildren().add(rectangle);
 
+        Rectangle[] posiciones = new Rectangle[10];
+        for(int i = 0; i<4; i++){
+            Rectangle ladrillo = new Rectangle(LADO/10, 10, Color.GREEN);
+            
+            ladrillo.setStroke(Color.BLACK);
+            int posicion = rnd.nextInt(10);
+            
+            while(posiciones[posicion] != null){
+                posicion = rnd.nextInt(10);
+            }
+            posiciones[posicion] = ladrillo;
+            ladrillo.setX(LADO/10 * posicion);
+            
+            ladrillo.setY(bounds.getMinY() + 30);
+            panel.getChildren().add(ladrillo);
+        }
+        
+        
+        
         escena.setOnKeyPressed(event ->{
                 if(event.getCode() == KeyCode.RIGHT && rectangle.getBoundsInParent().getMaxX() != escena.getWidth()){
                     movimientoRectangulo = 1;
