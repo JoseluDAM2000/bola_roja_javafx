@@ -47,8 +47,7 @@ public class Circulo extends Application
     private boolean goEast, goWest;
     private int movimientoRectangulo = 1;
     
-    private int contador, seg, min;
-
+    private int contador, seg, min, puntuacion;
     public static void main(String[] args){
         launch(args);
     }
@@ -59,7 +58,11 @@ public class Circulo extends Application
         enEjecucion = true;
         deltaX = 1;
         deltaY = 1;
-
+        contador = 0;
+        seg = 0;
+        min = 0;
+        puntuacion = 0;
+        
         primaryStage.setTitle("Mira la bolita, la bolita, la bolita, la bolita...");
 
         Random rnd = new Random();
@@ -67,6 +70,10 @@ public class Circulo extends Application
         Label cronometro = new Label();
         cronometro.setLayoutX(50);
         cronometro.setLayoutY(50);
+        
+        Label score = new Label("0");
+        score.setLayoutX(LADO-50);
+        score.setLayoutY(50);
         
         
         Timer tm = new Timer();
@@ -87,6 +94,7 @@ public class Circulo extends Application
         primaryStage.setScene(escena);
         primaryStage.show();
         panel.getChildren().add(cronometro);
+        panel.getChildren().add(score);
 
         final Bounds bounds = panel.getBoundsInParent();
 
@@ -165,9 +173,13 @@ public class Circulo extends Application
                             timeline.stop();
                         }
                         
-                    for(Rectangle ladrillo:posiciones){
-                        if(ladrillo!=null && ladrillo.intersects(bordesCircle)){
-                            System.out.println("TOMA");
+                    for(int i = 0; i<posiciones.length ;i++){
+                        if(posiciones[i]!=null && posiciones[i].intersects(bordesCircle)){
+                            posiciones[i].setFill(Color.TRANSPARENT);
+                            posiciones[i].setStroke(Color.TRANSPARENT);
+                            posiciones[i] = null;
+                            puntuacion++;
+                            score.setText(String.valueOf(puntuacion));
                         }
                     }
                 });
