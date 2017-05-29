@@ -9,6 +9,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import javafx.animation.Animation;
 import javafx.scene.control.Button;
@@ -19,6 +20,10 @@ import javafx.geometry.Bounds;
 import javafx.scene.shape.Rectangle;
 
 import javafx.scene.input.KeyEvent;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.scene.control.Label;
+
 /**
  * Write a description of class Bola here.
  *
@@ -38,9 +43,11 @@ public class Circulo extends Application
 
     private double deltaX;
     private double deltaY;
-    
+
     private boolean goEast, goWest;
     private int movimientoRectangulo = 1;
+    
+    private int contador, seg, min;
 
     public static void main(String[] args){
         launch(args);
@@ -53,64 +60,91 @@ public class Circulo extends Application
         deltaX = 1;
         deltaY = 1;
 
+        primaryStage.setTitle("Mira la bolita, la bolita, la bolita, la bolita...");
+
         Random rnd = new Random();
 
+        Label cronometro = new Label();
+        cronometro.setLayoutX(50);
+        cronometro.setLayoutY(50);
+        
+        
+        Timer tm = new Timer();
+        tm.schedule(new TimerTask(){
+                @Override
+                public void run() {
+                    contador++;
+                    seg = contador % 60;
+                    min = contador / 60;
+                }
+            },0,1000);
+        
+        
         Pane panel = new Pane();
         Circle circle = new Circle(rnd.nextInt(LADO-RADIO_CIRCULO*2)+RADIO_CIRCULO, rnd.nextInt(LADO-RADIO_CIRCULO*2)+RADIO_CIRCULO, RADIO_CIRCULO, Color.RED);
         Scene escena = new Scene(panel, LADO, LADO);
         panel.getChildren().add(circle);
         primaryStage.setScene(escena);
         primaryStage.show();
+        panel.getChildren().add(cronometro);
 
         final Bounds bounds = panel.getBoundsInParent();
 
         Rectangle rectangle = new Rectangle(ANCHO_RECTANGULO, ALTO_RECTANGULO, Color.BLUE);
         rectangle.setX(bounds.getMaxX()/2 - ANCHO_RECTANGULO/2);
         rectangle.setY(bounds.getMaxY() - DISTANCIA_INFERIOR_RECTANGULO);
-        rectangle.setArcWidth(20);
-        rectangle.setArcHeight(20);
 
         panel.getChildren().add(rectangle);
 
-        escena.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    switch (event.getCode()) {
-                        case LEFT:  
-                        goWest  = true; 
-                        goEast = false;
-                        break;
-                        case RIGHT: 
-                        goEast  = true;
-                        goWest = false;
-                        break;
-                    }
+        escena.setOnKeyPressed(event ->{
+                if(event.getCode() == KeyCode.RIGHT && rectangle.getBoundsInParent().getMaxX() != escena.getWidth()){
+                    movimientoRectangulo = 1;
                 }
+
+                if(event.getCode() == KeyCode.LEFT && rectangle.getBoundsInParent().getMinX() != 0){
+                    movimientoRectangulo = -1;
+                }  
+
             });
-        
-        
-        
+            
+        Timeline timeline = new Timeline();
         KeyFrame kf = new KeyFrame(Duration.millis(10), (event) -> {
                     final boolean atRightBorder = circle.getBoundsInParent().getMaxX() >= (bounds.getMaxX());
                     final boolean atLeftBorder = circle.getBoundsInParent().getMinX() <= (bounds.getMinX());
                     final boolean atBottomBorder = circle.getBoundsInParent().getMaxY() >= (bounds.getMaxY());
                     final boolean atTopBorder = circle.getBoundsInParent().getMinY() <= (bounds.getMinY());
+
+                    final boolean golpeBarra = circle.getBoundsInParent().getMaxY() >= rectangle.getBoundsInParent().getMinY();
+                    final boolean sobreBarra = circle.getBoundsInParent().getMaxX() < rectangle.getBoundsInParent().getMaxX() + RADIO_CIRCULO && circle.getBoundsInParent().getMinX() > rectangle.getBoundsInParent().getMinX() - RADIO_CIRCULO;
+
                     if (atRightBorder || atLeftBorder) {
                         deltaX *= -1;
                     }
-                    if (atBottomBorder || atTopBorder) {
+                    if (atTopBorder || (sobreBarra && golpeBarra)) {
                         deltaY *= -1;
                     }
 
                     circle.setLayoutX(circle.getLayoutX() + deltaX);
                     circle.setLayoutY(circle.getLayoutY() + deltaY);
-                    
+
                     if (goEast)  movimientoRectangulo = 1;
                     if (goWest)  movimientoRectangulo = -1;
                     rectangle.setLayoutX(rectangle.getLayoutX() + movimientoRectangulo);
 
+                    if(rectangle.getBoundsInParent().getMinX() == 0 || rectangle.getBoundsInParent().getMaxX() == panel.getWidth()){
+                        movimientoRectangulo = 0;
+                    }
+                    
+                    cronometro.setText(String.format("%02d:%02d",min,seg));
+                    if (circle.getBoundsInParent().getMinY() > escena.getHeight()){
+                            Label etiquetaGameOver = new Label("Game Over");
+                            etiquetaGameOver.setLayoutX(200);
+                            etiquetaGameOver.setLayoutY(425);
+                            panel.getChildren().add(etiquetaGameOver);
+                            timeline.stop();
+                        }
                 });
-        Timeline timeline = new Timeline(kf);
+        timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
         Button btn = new Button("Parar");
