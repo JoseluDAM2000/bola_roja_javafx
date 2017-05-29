@@ -128,12 +128,14 @@ public class Circulo extends Application
             
         Timeline timeline = new Timeline();
         KeyFrame kf = new KeyFrame(Duration.millis(10), (event) -> {
+                    Bounds bordesCircle = circle.getBoundsInParent();
+            
                     final boolean atRightBorder = circle.getBoundsInParent().getMaxX() >= (bounds.getMaxX());
                     final boolean atLeftBorder = circle.getBoundsInParent().getMinX() <= (bounds.getMinX());
                     final boolean atBottomBorder = circle.getBoundsInParent().getMaxY() >= (bounds.getMaxY());
                     final boolean atTopBorder = circle.getBoundsInParent().getMinY() <= (bounds.getMinY());
 
-                    final boolean golpeBarra = circle.getBoundsInParent().getMaxY() >= rectangle.getBoundsInParent().getMinY();
+                    final boolean golpeBarra = circle.getBoundsInParent().getMaxY() == rectangle.getBoundsInParent().getMinY();
                     final boolean sobreBarra = circle.getBoundsInParent().getMaxX() < rectangle.getBoundsInParent().getMaxX() + RADIO_CIRCULO && circle.getBoundsInParent().getMinX() > rectangle.getBoundsInParent().getMinX() - RADIO_CIRCULO;
 
                     if (atRightBorder || atLeftBorder) {
@@ -162,6 +164,12 @@ public class Circulo extends Application
                             panel.getChildren().add(etiquetaGameOver);
                             timeline.stop();
                         }
+                        
+                    for(Rectangle ladrillo:posiciones){
+                        if(ladrillo!=null && ladrillo.intersects(bordesCircle)){
+                            System.out.println("TOMA");
+                        }
+                    }
                 });
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
