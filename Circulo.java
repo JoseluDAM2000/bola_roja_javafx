@@ -23,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.scene.control.Label;
+import javafx.scene.shape.Shape;
 
 /**
  * Write a description of class Bola here.
@@ -92,7 +93,7 @@ public class Circulo extends Application
         Scene escena = new Scene(panel, LADO, LADO);
         panel.getChildren().add(circle);
         primaryStage.setScene(escena);
-        primaryStage.show();
+        
         panel.getChildren().add(cronometro);
         panel.getChildren().add(score);
 
@@ -104,24 +105,50 @@ public class Circulo extends Application
 
         panel.getChildren().add(rectangle);
 
-        Rectangle[] posiciones = new Rectangle[10];
-        for(int i = 0; i<4; i++){
-            Rectangle ladrillo = new Rectangle(LADO/10, 10, Color.GREEN);
+        //INICIO Colocar ladrillos ordenados.
+        
+        // Rectangle[] rectangulos = new Rectangle[10];
+        // for(int i = 0; i<4; i++){
+            // Rectangle ladrillo = new Rectangle(LADO/10, 10, Color.GREEN);
             
+            // ladrillo.setStroke(Color.BLACK);
+            // int posicion = rnd.nextInt(10);
+            
+            // while(rectangulos[posicion] != null){
+                // posicion = rnd.nextInt(10);
+            // }
+            // rectangulos[posicion] = ladrillo;
+            // ladrillo.setX(LADO/10 * posicion);
+            
+            // ladrillo.setY(bounds.getMinY() + 30);
+            // panel.getChildren().add(ladrillo);
+        // }
+        
+        //FIN Colocar ladrillos ordenados.
+        
+        //INICIO Colocar ladrillos desordenados.
+        ArrayList<Rectangle> ladrillos = new ArrayList<>();
+        int i = 0;
+        while(i<50){
+            Rectangle ladrillo = new Rectangle(50, 10, Color.GREEN);
             ladrillo.setStroke(Color.BLACK);
-            int posicion = rnd.nextInt(10);
-            
-            while(posiciones[posicion] != null){
-                posicion = rnd.nextInt(10);
+            ladrillo.setX(rnd.nextInt(500-50));
+            ladrillo.setY(rnd.nextInt(250-10));
+
+            boolean huecoLibre = true;
+            for(Rectangle ladrilloActual : ladrillos){
+                Shape interseccion = Shape.intersect(ladrillo, ladrilloActual);
+                if (interseccion.getBoundsInParent().getWidth() != -1) huecoLibre = false;
             }
-            posiciones[posicion] = ladrillo;
-            ladrillo.setX(LADO/10 * posicion);
-            
-            ladrillo.setY(bounds.getMinY() + 30);
-            panel.getChildren().add(ladrillo);
+
+            if(huecoLibre){
+                panel.getChildren().add(ladrillo);
+                ladrillos.add(ladrillo);
+                i++;
+            }
         }
         
-        
+        //FIN Colocar ladrillos desordenados.
         
         escena.setOnKeyPressed(event ->{
                 if(event.getCode() == KeyCode.RIGHT && rectangle.getBoundsInParent().getMaxX() != escena.getWidth()){
@@ -173,29 +200,34 @@ public class Circulo extends Application
                             timeline.stop();
                         }
                         
-                    for(int i = 0; i<posiciones.length ;i++){
-                        if(posiciones[i]!=null && posiciones[i].intersects(bordesCircle)){
-                            posiciones[i].setFill(Color.TRANSPARENT);
-                            posiciones[i].setStroke(Color.TRANSPARENT);
-                            posiciones[i] = null;
-                            puntuacion++;
-                            score.setText(String.valueOf(puntuacion));
-                        }
-                    }
+                    // for(int i = 0; i<rectangulos.length ;i++){
+                        // if(rectangulos[i]!=null && rectangulos[i].intersects(bordesCircle)){
+                            // rectangulos[i].setFill(Color.TRANSPARENT);
+                            // rectangulos[i].setStroke(Color.TRANSPARENT);
+                            // rectangulos[i] = null;
+                            // puntuacion++;
+                            // score.setText(String.valueOf(puntuacion));
+                        // }
+                    // }
+                    
+                    
+                    
                 });
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        Button btn = new Button("Parar");
-        btn.setOnAction(event -> {
-                if(enEjecucion){
-                    timeline.stop();
-                }else{
-                    timeline.play();
-                }
-                modificarEjecucion();
-            });
-        panel.getChildren().add(btn);
+        // Button btn = new Button("Parar");
+        // btn.setOnAction(event -> {
+                // if(enEjecucion){
+                    // timeline.stop();
+                // }else{
+                    // timeline.play();
+                // }
+                // modificarEjecucion();
+            // });
+        // panel.getChildren().add(btn);
+        
+        primaryStage.show();
     }
 
     private void modificarEjecucion(){
