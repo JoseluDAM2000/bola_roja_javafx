@@ -129,16 +129,18 @@ public class Circulo extends Application
         //INICIO Colocar ladrillos desordenados.
         ArrayList<Rectangle> ladrillos = new ArrayList<>();
         int i = 0;
-        while(i<50){
+        while(i<80){
             Rectangle ladrillo = new Rectangle(50, 10, Color.GREEN);
             ladrillo.setStroke(Color.BLACK);
-            ladrillo.setX(rnd.nextInt(500-50));
-            ladrillo.setY(rnd.nextInt(250-10));
+            ladrillo.setX(rnd.nextInt(LADO-50));
+            ladrillo.setY(rnd.nextInt(LADO/2-10));
 
             boolean huecoLibre = true;
-            for(Rectangle ladrilloActual : ladrillos){
-                Shape interseccion = Shape.intersect(ladrillo, ladrilloActual);
+            int ladrilloActual = 0;
+            while(ladrilloActual < ladrillos.size() && huecoLibre){
+                Shape interseccion = Shape.intersect(ladrillo, ladrillos.get(ladrilloActual));
                 if (interseccion.getBoundsInParent().getWidth() != -1) huecoLibre = false;
+                ladrilloActual++;
             }
 
             if(huecoLibre){
@@ -210,6 +212,17 @@ public class Circulo extends Application
                         // }
                     // }
                     
+                    for(int j = 0; j < ladrillos.size(); j++){
+                        Rectangle ladrilloAComprobar = ladrillos.get(j);
+                        Shape interseccion = Shape.intersect(circle, ladrilloAComprobar);
+                        if(interseccion.getBoundsInParent().getWidth() != -1){
+                            panel.getChildren().remove(ladrilloAComprobar);
+                            ladrillos.remove(ladrilloAComprobar);
+                            puntuacion++;
+                            score.setText(String.valueOf(puntuacion));
+                            j--;
+                        }
+                    }
                     
                     
                 });
