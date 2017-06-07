@@ -36,7 +36,7 @@ public class Circulo extends Application
     private boolean enEjecucion;
 
     private final int LADO=500;
-    private final int RADIO_CIRCULO = 25;
+    private final int RADIO_CIRCULO = 5;
 
     private final int ANCHO_RECTANGULO = 100;
     private final int ALTO_RECTANGULO = 10;
@@ -215,12 +215,21 @@ public class Circulo extends Application
                     for(int j = 0; j < ladrillos.size(); j++){
                         Rectangle ladrilloAComprobar = ladrillos.get(j);
                         Shape interseccion = Shape.intersect(circle, ladrilloAComprobar);
-                        if(interseccion.getBoundsInParent().getWidth() != -1){
+                        Bounds limitesInterseccion = interseccion.getBoundsInParent();
+                        if(limitesInterseccion.getWidth() != -1){
                             panel.getChildren().remove(ladrilloAComprobar);
                             ladrillos.remove(ladrilloAComprobar);
                             puntuacion++;
                             score.setText(String.valueOf(puntuacion));
                             j--;
+                            if(limitesInterseccion.getMaxX() > limitesInterseccion.getMaxY()){
+                                deltaY *= -1;
+                            }else if(limitesInterseccion.getMaxX() < limitesInterseccion.getMaxY()){
+                                deltaX *= -1;
+                            }else{
+                                deltaY *= -1;
+                                deltaX *= -1;
+                            }
                         }
                     }
                     
