@@ -41,7 +41,13 @@ public class Circulo extends Application
     private final int ANCHO_RECTANGULO = 100;
     private final int ALTO_RECTANGULO = 10;
     private final int DISTANCIA_INFERIOR_RECTANGULO = 50;
-
+    
+    private final int CANTIDAD_DE_LADRILLOS = 80;
+    private final int ANCHO_DE_LADRILLO = 50;
+    private final int ALTO_DE_LADRILLO = 10;
+    
+    private final int ESPACIADO_INTERFAZ = 15;
+    
     private double deltaX;
     private double deltaY;
 
@@ -69,12 +75,12 @@ public class Circulo extends Application
         Random rnd = new Random();
 
         Label cronometro = new Label();
-        cronometro.setLayoutX(50);
-        cronometro.setLayoutY(50);
+        cronometro.setLayoutX(0);
+        cronometro.setLayoutY(0);
         
         Label score = new Label("0");
-        score.setLayoutX(LADO-50);
-        score.setLayoutY(50);
+        score.setLayoutX(LADO-20);
+        score.setLayoutY(0);
         
         
         Timer tm = new Timer();
@@ -129,11 +135,11 @@ public class Circulo extends Application
         //INICIO Colocar ladrillos desordenados.
         ArrayList<Rectangle> ladrillos = new ArrayList<>();
         int i = 0;
-        while(i<80){
-            Rectangle ladrillo = new Rectangle(50, 10, Color.GREEN);
+        while(i<CANTIDAD_DE_LADRILLOS){
+            Rectangle ladrillo = new Rectangle(ANCHO_DE_LADRILLO, ALTO_DE_LADRILLO, Color.GREEN);
             ladrillo.setStroke(Color.BLACK);
-            ladrillo.setX(rnd.nextInt(LADO-50));
-            ladrillo.setY(rnd.nextInt(LADO/2-10));
+            ladrillo.setX(rnd.nextInt(LADO-ANCHO_DE_LADRILLO));
+            ladrillo.setY(rnd.nextInt(LADO/2-ALTO_DE_LADRILLO-ESPACIADO_INTERFAZ)+ESPACIADO_INTERFAZ);
 
             boolean huecoLibre = true;
             int ladrilloActual = 0;
@@ -222,14 +228,14 @@ public class Circulo extends Application
                             puntuacion++;
                             score.setText(String.valueOf(puntuacion));
                             j--;
-                            if(limitesInterseccion.getMaxX() > limitesInterseccion.getMaxY()){
+                            
+                            //Colisiones
+                            if(limitesInterseccion.getWidth() > limitesInterseccion.getHeight()){
                                 deltaY *= -1;
-                            }else if(limitesInterseccion.getMaxX() < limitesInterseccion.getMaxY()){
-                                deltaX *= -1;
                             }else{
-                                deltaY *= -1;
                                 deltaX *= -1;
                             }
+                            //Fin colisiones
                         }
                     }
                     
