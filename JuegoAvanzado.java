@@ -12,6 +12,7 @@ import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Shape;
 import java.util.ArrayList;
+import javafx.scene.text.TextAlignment;
 
 /**
  * Write a description of class JuegoAvanzado here.
@@ -24,6 +25,8 @@ public class JuegoAvanzado extends Application
     private static final float ANCHO_DE_LA_ESCENA = 500;
     private static final float ALTO_DE_LA_ESCENA = 700;
     private static final int CANTIDAD_DE_LADRILLOS = 40;
+    private static final String MENSAJE_GAME_OVER = "Game Over\nPulsa Esc para salir";
+    private static final float ANCHO_MENSAJE_GAME_OVER = 100;
     
     private int contadorTimer, seg, min;
     
@@ -54,43 +57,18 @@ public class JuegoAvanzado extends Application
                 }
             },0,1000);
         
-        Label score = new Label("0");
-        score.setLayoutX(ANCHO_DE_LA_ESCENA-20);
-        panel.getChildren().add(score);
+        Label puntuacion = new Label("0");
+        puntuacion.setLayoutX(ANCHO_DE_LA_ESCENA-20);
+        panel.getChildren().add(puntuacion);
         
-        Bola bola = new Bola(ANCHO_DE_LA_ESCENA, ALTO_DE_LA_ESCENA);
+        Bola bola = new Bola(puntuacion, ANCHO_DE_LA_ESCENA, ALTO_DE_LA_ESCENA);
         panel.getChildren().add(bola);
         
         Plataforma plataforma = new Plataforma(ANCHO_DE_LA_ESCENA, ALTO_DE_LA_ESCENA);
         panel.getChildren().add(plataforma);
         
-        ArrayList<Ladrillo> ladrillos = new ArrayList<>();
-        int i = 0;
-        while(i<CANTIDAD_DE_LADRILLOS){
-            //Hay que pasar el tamaño de la escena por parametro
-            // Ladrillo ladrillo = new Ladrillo();
-            
-
-            // boolean huecoLibre = true;
-            // int ladrilloActual = 0;
-            // while(ladrilloActual < ladrillos.size() && huecoLibre){
-                // Shape interseccion = Shape.intersect(ladrillo, ladrillos.get(ladrilloActual));
-                // if (interseccion.getBoundsInParent().getWidth() != -1) huecoLibre = false;
-                // ladrilloActual++;
-            // }
-
-            // if(huecoLibre){
-                // panel.getChildren().add(ladrillo);
-                // ladrillos.add(ladrillo);
-                // i++;
-            // }
-        }
-        
-        
-        
-        
-        
-        
+        ArrayList<Ladrillo> ladrillos = Ladrillo.generarLadrillos(CANTIDAD_DE_LADRILLOS, ANCHO_DE_LA_ESCENA, ALTO_DE_LA_ESCENA);
+        panel.getChildren().addAll(ladrillos);
         
         escena.setOnKeyPressed(event ->{
                 if(event.getCode() == KeyCode.RIGHT){
@@ -99,6 +77,10 @@ public class JuegoAvanzado extends Application
                 if(event.getCode() == KeyCode.LEFT){
                     plataforma.cambiarDireccion(Direccion.IZQUIERDA);
                 }  
+                //Codigo adicional por comodidad
+                if(event.getCode() == KeyCode.ESCAPE){
+                    System.exit(0);
+                }
             });
         
         Timeline timeline = new Timeline();
@@ -106,19 +88,21 @@ public class JuegoAvanzado extends Application
                     bola.actualizar();
                     plataforma.mover();
                     bola.chocaCon(plataforma);
-                    
-                    
-                    
+                    bola.chocaCon(ladrillos);
+                    if(bola.perdida()){
+                        Label etiquetaGameOver = new Label(MENSAJE_GAME_OVER);
+                        etiquetaGameOver.setTextAlignment(TextAlignment.CENTER);
+                        etiquetaGameOver.setMaxWidth(ANCHO_MENSAJE_GAME_OVER);
+                        etiquetaGameOver.setLayoutX(ANCHO_DE_LA_ESCENA / 2 - ANCHO_MENSAJE_GAME_OVER / 2);
+                        etiquetaGameOver.setLayoutY(ALTO_DE_LA_ESCENA / 2);
+                        panel.getChildren().add(etiquetaGameOver);
+                        timeline.stop();
+                    }
                     cronometro.setText(String.format("%02d:%02d",min,seg));
-                    
                 });
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        
-        
-        
-        
         
         primaryStage.show();
     }

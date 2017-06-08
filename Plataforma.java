@@ -33,17 +33,17 @@ public class Plataforma extends Rectangle
     public void cambiarDireccion(Direccion direccion){
         switch(direccion){
             case DERECHA:
-            velocidad = 1;
+            if(!(getBoundsInParent().getMaxX() >= limiteEnX))    velocidad = 1;
             break;
             case IZQUIERDA:
-            velocidad = -1;
+            if(!(getBoundsInParent().getMinX() <= 0)) velocidad = -1;
             break;
         }
     }
     
     public void mover(){
         setX(getX()+velocidad);
-        if (getBoundsInParent().getMinX() == 0 || getBoundsInParent().getMaxX() == limiteEnX){
+        if (getBoundsInParent().getMinX() <= 0 || getBoundsInParent().getMaxX() >= limiteEnX){
             velocidad = 0;
         }
     }
