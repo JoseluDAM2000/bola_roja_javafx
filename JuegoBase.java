@@ -31,7 +31,7 @@ import javafx.scene.shape.Shape;
  * @author (your name)
  * @version (a version number or a date)
  */
-public class Circulo extends Application
+public class JuegoBase extends Application
 {
     private boolean enEjecucion;
 
