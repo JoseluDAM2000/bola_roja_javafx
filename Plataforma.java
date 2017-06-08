@@ -14,20 +14,23 @@ public class Plataforma extends Rectangle
     private static final float ANCHO_PLATAFORMA = 200;
     private static final float DISTANCIA_INFERIOR = 20;
     private static final Color COLOR_DE_LA_PLATAFORMA = Color.BLUE;
+    private float limiteEnX;
     private int velocidad;
     
-    public Plataforma(float anchoEscena)
+    public Plataforma(float anchoEscena, float altoEscena)
     {
         super();
         setHeight(ALTO_PLATAFORMA);
         setWidth(ANCHO_PLATAFORMA);
-        setY(DISTANCIA_INFERIOR);
+        setY(altoEscena-DISTANCIA_INFERIOR);
         setX(anchoEscena/2-ANCHO_PLATAFORMA/2);
         setFill(COLOR_DE_LA_PLATAFORMA);
+        limiteEnX = anchoEscena;
         velocidad = 1;
     }
     
-    public void mover(Direccion direccion){
+    
+    public void cambiarDireccion(Direccion direccion){
         switch(direccion){
             case DERECHA:
             velocidad = 1;
@@ -36,6 +39,12 @@ public class Plataforma extends Rectangle
             velocidad = -1;
             break;
         }
+    }
+    
+    public void mover(){
         setX(getX()+velocidad);
+        if (getBoundsInParent().getMinX() == 0 || getBoundsInParent().getMaxX() == limiteEnX){
+            velocidad = 0;
+        }
     }
 }

@@ -37,4 +37,5 @@ public class Ladrillo extends Rectangle
     public void golpearLadrillo(){
         
     }
+    
 }
